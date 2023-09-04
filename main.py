@@ -8,4 +8,3 @@ import pandas
 
 # ---------------------------- UI SETUP ------------------------------- #
 
-print('hello world')
