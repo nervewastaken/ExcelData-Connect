@@ -8,3 +8,4 @@ import pandas
 
 # ---------------------------- UI SETUP ------------------------------- #
 
+print('Luade kaam karle reel dekhna baad kar')
