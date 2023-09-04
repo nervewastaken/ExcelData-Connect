@@ -5,13 +5,10 @@ from PIL import Image, ImageTk
 root = tk.Tk()
 
 # Set the window size to 1920x1080 pixels
-window_width = 1920
-window_height = 1080
-root.geometry(f"{window_width}x{window_height}")
+root.config(width=1920,height=1080)
 
 # Load the background image
 background_image = Image.open("snew.png")  # Replace with your image file
-background_image = background_image.resize((window_width, window_height), Image.ANTIALIAS)
 background_photo = ImageTk.PhotoImage(background_image)
 
 # Create a label to display the background image
