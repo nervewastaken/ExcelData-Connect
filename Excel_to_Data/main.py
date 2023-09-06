@@ -8,4 +8,9 @@ import pandas
 
 # ---------------------------- UI SETUP ------------------------------- #
 
-print('Luade kaam karle reel dekhna baad kar')
+window = Tk()
+window.title('i dont know')
+window.config(width=1920,height=1080)
+#window.attributes('fullscreen', True)
+
+window.mainloop()
