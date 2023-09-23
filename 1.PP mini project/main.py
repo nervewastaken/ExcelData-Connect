@@ -14,7 +14,6 @@ class Brain:
         self.window = Tk()
         self.window.title('Excel Data Connect')
         self.window.geometry("1920x1080")
-        # self.window.config(bg='green')
 
         self.entry_tuple = (1, 1, 1, 1, 1)
         self.entry_list = []
@@ -40,30 +39,33 @@ class Brain:
         self.product = self.product_entry.get()
         self.quantity = self.quantity_entry.get()
         
-        self.new_data = [self.cus_name,self.phone_no,self.product,self.quantity]
+        data = {
+            'Name':[self.cus_name],
+            'Phone No':[self.phone_no],
+            'Product':[self.product],
+            'Quantity':self.quantity
+        }
         
-        self.cols = ['Name','Phone Numbers','Products','Quantity']
+        data_file = pandas.DataFrame(data)
         
-        try:
-            with open(f'{self.today}.csv',mode='r') as data_file:
-                old_data = csv.reader(data_file)
-
-        except FileNotFoundError:
-            with open(f'{self.today}.csv',mode='w') as data_file:
-                csv_writer = csv.writer(data_file)
-                csv_writer.writerow(self.cols)
-                csv_writer.writerow(self.new_data)
-                
+        if len(self.cus_name) == 0 or len(self.phone_no) == 0 or len(self.product) == 0 or len(self.quantity) == 0:
+            messagebox.showinfo(title='Oops!!', message='Please make sure you haven\'t left any fields empty.')
         else:
-            with open(f'{self.today}.csv',mode='a') as data_file:
-                csv_writer = csv.writer(data_file)
-                csv_writer.writerow(self.new_data)
-        
-        finally:
-            self.name_entry.delete(0,END)
-            self.no_entry.delete(0,END)
-            self.product_entry.delete(0,END)
-            self.quantity_entry.delete(0,END)
+            
+            try:
+                pandas.read_csv(f'{self.today}.csv')
+
+            except FileNotFoundError:
+                data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
+                    
+            else:
+                data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
+            
+            finally:
+                self.name_entry.delete(0,END)
+                self.no_entry.delete(0,END)
+                self.product_entry.delete(0,END)
+                self.quantity_entry.delete(0,END)
 
     def create_home_page(self):  # home page
         home_page = Frame(self.window)
@@ -96,14 +98,7 @@ class Brain:
         self.entry_list.append(self.quantity_entry)
 
     def exit_add(self):
-        '''lenq = len(self.entry_list) - 5
-        print(self.entry_list)
-        print(lenq)
-        for product_entry in self.entry_list:
-            self.product_entry.destroy()
-            self.quantity_entry.destroy()
 
-        print(self.entry_list)'''
         self.show_page('home_page')
 
         self.entry_list.clear()
