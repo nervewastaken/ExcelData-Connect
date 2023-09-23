@@ -12,7 +12,7 @@ class Brain:
 
         self.window = Tk()
         self.window.title('Excel Data Connect')
-        self.window.geometry("1920x1080")
+        self.window.attributes('-fullscreen',True)
         self.window.config(bg='#25274d')
 
         self.p_list = []
@@ -42,9 +42,6 @@ class Brain:
         product = self.product_entry.get()
         quantity = self.quantity_entry.get()
         
-        product_list.append(product)
-        quantity_list.append(quantity)
-        
         for entry in self.p_list:
             p_data = entry.get()
             product_list.append(p_data)
@@ -56,8 +53,8 @@ class Brain:
         data = {
             'Name':[cus_name],
             'Phone No':[phone_no],
-            'Product':' '.join([str(char) for char in product_list]),
-            'Quantity':' '.join([str(char) for char in quantity_list])
+            'Product': [product],
+            'Quantity':[quantity]
         }
         
         data_file = pandas.DataFrame(data)
@@ -70,7 +67,19 @@ class Brain:
                 pandas.read_csv(f'{self.today}.csv')
 
             except FileNotFoundError:
-                data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
+                if not len(product_list) == 0 or len(quantity_list) == 0:
+                    data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
+                    
+                    for (product_2,quantity_2) in zip(product_list,quantity_list):
+                        new_data = {
+                            'Product': [product_2],
+                            'Quantity':[quantity_2]
+                        }
+                        new_data_file = pandas.DataFrame(new_data,new_line='')
+                        new_data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
+                        
+                else:
+                    data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
                     
             else:
                 data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
