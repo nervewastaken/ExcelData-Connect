@@ -162,11 +162,11 @@ class Brain:
             data_file = pandas.DataFrame(columns=["Name", "Phone No", "Product",'Quantity'])
 
             file_name = file_name_entry.get()
-
+            
             if not file_name.endswith('.csv'):
                 file_name += '.csv'
 
-            data_file.to_excel(file_name, index=False)
+            data_file.to_csv(file_name, index=False)
 
             result_label.config(text=f"Excel sheet '{file_name}' created successfully")
             
