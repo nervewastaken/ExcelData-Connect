@@ -34,9 +34,6 @@ class Brain:
 
         self.window.mainloop()
 
-    def exit(self):
-        self.window.destroy()
-
     def save(self):
         self.cus_name = self.name_entry.get()
         self.phone_no = self.no_entry.get()
@@ -154,6 +151,9 @@ class Brain:
         add_product_button.grid(row=0, column=1, columnspan=2)
 
         return self.add_page
+    
+    def exit(self):
+        self.window.destroy()
 
     def create_excel_sheet_page(self):
         excel_sheet_page = Frame(self.window)
