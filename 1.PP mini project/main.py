@@ -168,15 +168,12 @@ class Brain:
 
             data_file.to_csv(file_name, index=False)
 
-            result_label.config(text=f"Excel sheet '{file_name}' created successfully")
+            messagebox.showinfo(title='',message=f'Excel sheet {file_name} created successfully')
             file_name_entry.delete(0,END)
             
         #Label
         file_name_label = Label(excel_sheet_page, text="Enter Excel File Name:",font=L_FONT)
         file_name_label.grid(row=1, column=1)
-        
-        result_label = Label(excel_sheet_page, text="",font=L_FONT)
-        result_label.grid(row=3, column=1)
 
         #entry
         file_name_entry = Entry(excel_sheet_page)
