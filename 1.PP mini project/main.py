@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import messagebox
 import pandas
 from datetime import date
+import matplotlib as plt
+import seaborn as sns
 
 FONT = ("Garamond", 50, "bold",)
 B_FONT = ("Times new roman", 18)
@@ -29,6 +31,7 @@ class Brain:
             'home_page': self.create_home_page(),
             'add_page': self.create_add_page(),
             'create_sheet_page': self.create_excel_sheet_page(),
+            ##'analysis_page': self.create_analysis_page(),
         }
 
         self.show_page('home_page')
@@ -121,6 +124,9 @@ class Brain:
 
         create_button = Button(home_page, text='Create New Sheet',bg=BUTTON_BG, highlightthickness=0, font=B_FONT,command=lambda: self.show_page('create_sheet_page'))
         create_button.grid(row=0, column=2, padx=30)
+
+        analyse_button = Button(home_page, text='Analyse Data', bg = BUTTON_BG, highlightthickness=0, font=B_FONT, command=lambda:self.show_page("create_analysis_page") )
+        analyse_button.grid(row=0, column=4,padx=30, pady=30)
 
         exit_button = Button(home_page, text='Exit', highlightthickness=0,bg=BUTTON_BG, font=B_FONT, command=self.exit)
         exit_button.grid(row=0, column=3, padx=30, pady=30)
@@ -233,6 +239,39 @@ class Brain:
         create_excel_button.grid(row=0, column=2)
 
         return excel_sheet_page
+    
+
+    def create_analysis_page(self):
+        analysis_page = Frame(self.window)
+        analysis_page.config(bg=PAGE_LABEL_BG)
+
+        analyze_button = Button(analysis_page, text='Analyze Data', bg=BUTTON_BG, command=self.analyze_data)
+        analyze_button.pack(pady=20)
+
+        back_button = Button(analysis_page, text='Home Page', bg=BUTTON_BG, command=lambda: self.show_page('home_page'))
+        back_button.pack()
+
+        
+
+        def analyze_data(self):
+            try:
+                data = pandas.read_csv(f'{self.today}.csv')  # Load your data from the CSV file
+
+                # Perform data analysis here
+                # Example: Create a histogram of a numerical column
+                plt.figure(figsize=(8, 6))
+                sns.histplot(data['Quantity'], bins=10, kde=True)
+                plt.xlabel('Products')
+                plt.ylabel('Quantity')
+                plt.title('Quantity Distribution')
+                plt.show()
+
+                # You can add more analysis tasks here
+
+            except FileNotFoundError:
+                messagebox.showinfo(title='Oops!!', message=f'File {self.today}.csv not found.')
+
+            return analysis_page
 
     def show_page(self, page):
         # Hides all pages
@@ -243,3 +282,5 @@ class Brain:
         self.pages[page].pack()
 
 root = Brain()
+
+
