@@ -72,7 +72,6 @@ class Brain:
         if len(cus_name) == 0 or len(phone_no) == 0 or len(product) == 0 or len(quantity) == 0 or len(price) == 0:
             messagebox.showinfo(title='Oops!!', message='Please make sure you haven\'t left any fields empty.')
         else:
-            
             try:
                 pandas.read_csv(f'{self.today}.csv')
 
@@ -93,7 +92,7 @@ class Brain:
                         
                 else:
                     data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
-                    
+                        
             else:
                 if not len(product_list) == 0 or len(quantity_list) == 0 or len(price_list) == 0:
                     data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
@@ -187,7 +186,7 @@ class Brain:
         back_button.grid(row=0, column=0)
 
         add_product_button = Button(self.add_page, text='Add Product', width=15, command=self.create_entry,bg=BUTTON_BG)
-        add_product_button.grid(row=0, column=1, columnspan=2)
+        add_product_button.grid(row=0, column=2)
 
         return self.add_page
 
@@ -209,9 +208,14 @@ class Brain:
         self.pr_e_list.append(self.price_entry_2)
 
     def exit_add(self):
+        self.name_entry.delete(0,END)
+        self.no_entry.delete(0,END)
+        self.product_entry.delete(0,END)
+        self.quantity_entry.delete(0,END)
+        self.price_entry.delete(0,END)
         for (p_entry,q_entry,pr_entry) in zip(self.p_e_list,self.q_e_list,self.pr_e_list):
             p_entry.destroy()
-            q_entry.destroy()   
+            q_entry.destroy()
             pr_entry.destroy()
         
         self.show_page('home_page')
@@ -228,7 +232,7 @@ class Brain:
         excel_sheet_page.config(bg=PAGE_LABEL_BG)
 
         def create_excel_sheet():
-            data_file = pandas.DataFrame(columns=["Name", "Phone No", "Product",'Quantity'])
+            data_file = pandas.DataFrame(columns=["Name", "Phone No", "Product",'Quantity','Price'])
 
             file_name = file_name_entry.get()
             
