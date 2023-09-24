@@ -17,8 +17,9 @@ class Brain:
         self.window.attributes('-fullscreen',True)
         self.window.config(bg=PAGE_LABEL_BG)
 
-        self.p_list = []
-        self.q_list = []
+        self.p_e_list = []
+        self.q_e_list = []
+        self.pr_e_list = []
         
         self.today = date.today()
 
@@ -38,30 +39,37 @@ class Brain:
     def save(self):
         product_list = []
         quantity_list = []
+        price_list = []
         
         cus_name = self.name_entry.get()
         phone_no = self.no_entry.get()
         product = self.product_entry.get()
         quantity = self.quantity_entry.get()
+        price = self.price_entry.get()
         
-        for entry in self.p_list:
+        for entry in self.p_e_list:
             p_data = entry.get()
             product_list.append(p_data)
             
-        for entry in self.q_list:
+        for entry in self.q_e_list:
             q_data = entry.get()
             quantity_list.append(q_data)
+            
+        for entry in self.pr_e_list:
+            pr_data = entry.get()
+            price_list.append(pr_data)
         
         data = {
             'Name':[cus_name],
             'Phone No':[phone_no],
             'Product': [product],
-            'Quantity':[quantity]
+            'Quantity':[quantity],
+            'Price':[price]
         }
         
         data_file = pandas.DataFrame(data)
         
-        if len(cus_name) == 0 or len(phone_no) == 0 or len(product) == 0 or len(quantity) == 0:
+        if len(cus_name) == 0 or len(phone_no) == 0 or len(product) == 0 or len(quantity) == 0 or len(price) == 0:
             messagebox.showinfo(title='Oops!!', message='Please make sure you haven\'t left any fields empty.')
         else:
             
@@ -69,15 +77,16 @@ class Brain:
                 pandas.read_csv(f'{self.today}.csv')
 
             except FileNotFoundError:
-                if not len(product_list) == 0 or len(quantity_list) == 0:
+                if not len(product_list) == 0 or len(quantity_list) == 0 or len(price_list) == 0:
                     data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
                     
-                    for (product_2,quantity_2) in zip(product_list,quantity_list):
+                    for (product_2,quantity_2,price_2) in zip(product_list,quantity_list,price_list):
                         new_data = {
                             'Name':cus_name,
                             'Phone No':phone_no,
                             'Product': [product_2],
-                            'Quantity':[quantity_2]
+                            'Quantity':[quantity_2],
+                            'Price':[price_2]
                         }
                         new_data_file = pandas.DataFrame(new_data)
                         new_data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
@@ -86,15 +95,16 @@ class Brain:
                     data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
                     
             else:
-                if not len(product_list) == 0 or len(quantity_list) == 0:
+                if not len(product_list) == 0 or len(quantity_list) == 0 or len(price_list) == 0:
                     data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
                     
-                    for (product_2,quantity_2) in zip(product_list,quantity_list):
+                    for (product_2,quantity_2,price_2) in zip(product_list,quantity_list,price_list):
                         new_data = {
                             'Name':cus_name,
                             'Phone No':phone_no,
                             'Product': [product_2],
-                            'Quantity':[quantity_2]
+                            'Quantity':[quantity_2],
+                            'Price':[price_2]
                         }
                         new_data_file = pandas.DataFrame(new_data)
                         new_data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
@@ -102,14 +112,16 @@ class Brain:
                     data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
             
             finally:
-                messagebox.showinfo(title='Excel Data Connect', message=f'Data has been added to file {self.today}.csv')
                 self.name_entry.delete(0,END)
                 self.no_entry.delete(0,END)
                 self.product_entry.delete(0,END)
                 self.quantity_entry.delete(0,END)
-                for (p_entry,q_entry) in zip(self.p_list,self.q_list):
+                self.price_entry.delete(0,END)
+                for (p_entry,q_entry,pr_entry) in zip(self.p_e_list,self.q_e_list,self.pr_e_list):
                     p_entry.destroy()
                     q_entry.destroy()
+                    pr_entry.destroy()
+                messagebox.showinfo(title='Excel Data Connect', message=f'Data has been added to file {self.today}.csv')
 
     def create_home_page(self):  # home page
         home_page = Frame(self.window)
@@ -126,29 +138,7 @@ class Brain:
         exit_button.grid(row=0, column=3, padx=30, pady=30)
 
         return home_page
-
-    def create_entry(self):
-        # product
-        self.product_entry_2 = Entry(self.add_page, width=15)
-        self.product_entry_2.grid(row=len(self.p_list)+5, column=1)
-
-        # quantity
-        self.quantity_entry_2 = Entry(self.add_page, width=15)
-        self.quantity_entry_2.grid(row=len(self.q_list)+5, column=2)
-
-        self.p_list.append(self.product_entry_2)
-        self.q_list.append(self.quantity_entry_2)
-
-    def exit_add(self):
-        for (p_entry,q_entry) in zip(self.p_list,self.q_list):
-            p_entry.destroy()
-            q_entry.destroy()   
-        
-        self.show_page('home_page')
-
-        self.p_list.clear()
-        self.q_list.clear()
-
+    
     def create_add_page(self):  # add page
         self.add_page = Frame(self.window)
         self.add_page.config(bg=PAGE_LABEL_BG)
@@ -177,10 +167,17 @@ class Brain:
 
         # quantity
         quantity_label = Label(self.add_page, text='Quantity:', font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
-        quantity_label.grid(row=3, column=2, pady=10)
+        quantity_label.grid(row=3, column=2, pady=10,padx=70)
 
         self.quantity_entry = Entry(self.add_page, width=15)
         self.quantity_entry.grid(row=4, column=2)
+        
+        #price
+        price_label = Label(self.add_page, text='Price:', font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
+        price_label.grid(row=3, column=3, pady=10,padx=50)
+        
+        self.price_entry = Entry(self.add_page, width=15)
+        self.price_entry.grid(row=4, column=3)
 
         # Buttons
         self.add_button = Button(self.add_page, text='Add Data', command=self.save,bg=BUTTON_BG)
@@ -193,7 +190,36 @@ class Brain:
         add_product_button.grid(row=0, column=1, columnspan=2)
 
         return self.add_page
-    
+
+    def create_entry(self):
+        # product
+        self.product_entry_2 = Entry(self.add_page, width=15)
+        self.product_entry_2.grid(row=len(self.p_e_list)+5, column=1)
+
+        # quantity
+        self.quantity_entry_2 = Entry(self.add_page, width=15)
+        self.quantity_entry_2.grid(row=len(self.q_e_list)+5, column=2)
+        
+        #price
+        self.price_entry_2 = Entry(self.add_page, width=15)
+        self.price_entry_2.grid(row=len(self.pr_e_list)+5, column=3)
+
+        self.p_e_list.append(self.product_entry_2)
+        self.q_e_list.append(self.quantity_entry_2)
+        self.pr_e_list.append(self.price_entry_2)
+
+    def exit_add(self):
+        for (p_entry,q_entry,pr_entry) in zip(self.p_e_list,self.q_e_list,self.pr_e_list):
+            p_entry.destroy()
+            q_entry.destroy()   
+            pr_entry.destroy()
+        
+        self.show_page('home_page')
+
+        self.p_e_list.clear()
+        self.q_e_list.clear()
+        self.pr_e_list.clear()
+   
     def exit(self):
         self.window.destroy()
 
