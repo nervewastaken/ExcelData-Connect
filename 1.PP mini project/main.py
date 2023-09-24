@@ -6,6 +6,8 @@ from datetime import date
 FONT = ("Garamond", 50, "bold",)
 B_FONT = ("Times new roman", 18)
 L_FONT = ("Arial", 18)
+PAGE_LABEL_BG = '#25274d'
+BUTTON_BG = '#2e9cca'
 
 class Brain:
     def __init__(self):
@@ -13,14 +15,14 @@ class Brain:
         self.window = Tk()
         self.window.title('Excel Data Connect')
         self.window.attributes('-fullscreen',True)
-        self.window.config(bg='#25274d')
+        self.window.config(bg=PAGE_LABEL_BG)
 
         self.p_list = []
         self.q_list = []
         
         self.today = date.today()
 
-        title_label = Label(self.window, text='Excel Data Connect',fg='white', font=FONT,bg='#25274d', highlightthickness=0)
+        title_label = Label(self.window, text='Excel Data Connect',fg='white', font=FONT,bg=PAGE_LABEL_BG, highlightthickness=0)
         title_label.pack(pady=20)
 
         self.pages = {
@@ -72,40 +74,54 @@ class Brain:
                     
                     for (product_2,quantity_2) in zip(product_list,quantity_list):
                         new_data = {
+                            'Name':cus_name,
+                            'Phone No':phone_no,
                             'Product': [product_2],
                             'Quantity':[quantity_2]
                         }
-                        new_data_file = pandas.DataFrame(new_data,new_line='')
+                        new_data_file = pandas.DataFrame(new_data)
                         new_data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
                         
                 else:
                     data_file.to_csv(f'{self.today}.csv',mode='w',index=False,header=True)
                     
             else:
-                data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
+                if not len(product_list) == 0 or len(quantity_list) == 0:
+                    data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
+                    
+                    for (product_2,quantity_2) in zip(product_list,quantity_list):
+                        new_data = {
+                            'Name':cus_name,
+                            'Phone No':phone_no,
+                            'Product': [product_2],
+                            'Quantity':[quantity_2]
+                        }
+                        new_data_file = pandas.DataFrame(new_data)
+                        new_data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
+                else:
+                    data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
             
             finally:
                 self.name_entry.delete(0,END)
                 self.no_entry.delete(0,END)
                 self.product_entry.delete(0,END)
                 self.quantity_entry.delete(0,END)
-                for entry in self.p_list:
-                    entry.destroy()
-                for entry in self.q_list:
-                    entry.destroy()
+                for (p_entry,q_entry) in zip(self.p_list,self.q_list):
+                    p_entry.destroy()
+                    q_entry.destroy()
 
     def create_home_page(self):  # home page
         home_page = Frame(self.window)
-        home_page.config(bg='#25274d')
+        home_page.config(bg=PAGE_LABEL_BG)
 
         # Buttons
-        add_button = Button(home_page, text='Add Data',bg='#2e9cca',  highlightthickness=0, font=B_FONT,command=lambda: self.show_page("add_page"))
+        add_button = Button(home_page, text='Add Data',bg=BUTTON_BG, highlightthickness=0, font=B_FONT,command=lambda: self.show_page("add_page"))
         add_button.grid(row=0, column=1, padx=30)
 
-        create_button = Button(home_page, text='Create New Sheet',bg='#2e9cca', highlightthickness=0, font=B_FONT,command=lambda: self.show_page('create_sheet_page'))
+        create_button = Button(home_page, text='Create New Sheet',bg=BUTTON_BG, highlightthickness=0, font=B_FONT,command=lambda: self.show_page('create_sheet_page'))
         create_button.grid(row=0, column=2, padx=30)
 
-        exit_button = Button(home_page, text='Exit', highlightthickness=0,bg='#2e9cca', font=B_FONT, command=self.exit)
+        exit_button = Button(home_page, text='Exit', highlightthickness=0,bg=BUTTON_BG, font=B_FONT, command=self.exit)
         exit_button.grid(row=0, column=3, padx=30, pady=30)
 
         return home_page
@@ -123,10 +139,9 @@ class Brain:
         self.q_list.append(self.quantity_entry_2)
 
     def exit_add(self):
-        for entry in self.p_list:
-            entry.destroy()
-        for entry in self.q_list:
-            entry.destroy()    
+        for (p_entry,q_entry) in zip(self.p_list,self.q_list):
+            p_entry.destroy()
+            q_entry.destroy()   
         
         self.show_page('home_page')
 
@@ -135,10 +150,10 @@ class Brain:
 
     def create_add_page(self):  # add page
         self.add_page = Frame(self.window)
-        self.add_page.config(bg='#25274d')
+        self.add_page.config(bg=PAGE_LABEL_BG)
 
         # name
-        name_label = Label(self.add_page, text='Name:', font=L_FONT,bg='#25274d',fg='White')
+        name_label = Label(self.add_page, text='Name:', font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
         name_label.grid(row=1, column=1, padx=50)
         name_label.focus()
 
@@ -146,34 +161,34 @@ class Brain:
         self.name_entry.grid(row=1, column=2, columnspan=2)
 
         # phone_no
-        no_label = Label(self.add_page, text='Phone Number:', font=L_FONT,bg='#25274d',fg='White')
+        no_label = Label(self.add_page, text='Phone Number:', font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
         no_label.grid(row=2, column=1)
 
         self.no_entry = Entry(self.add_page, width=30)
         self.no_entry.grid(row=2, column=2, columnspan=2)
 
         # product
-        product_label = Label(self.add_page, text='Product:', font=L_FONT,bg='#25274d',fg='White')
+        product_label = Label(self.add_page, text='Product:', font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
         product_label.grid(row=3, column=1, pady=10)
 
         self.product_entry = Entry(self.add_page, width=15)
         self.product_entry.grid(row=4, column=1)
 
         # quantity
-        quantity_label = Label(self.add_page, text='Quantity:', font=L_FONT,bg='#25274d',fg='White')
+        quantity_label = Label(self.add_page, text='Quantity:', font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
         quantity_label.grid(row=3, column=2, pady=10)
 
         self.quantity_entry = Entry(self.add_page, width=15)
         self.quantity_entry.grid(row=4, column=2)
 
         # Buttons
-        self.add_button = Button(self.add_page, text='Add Data', command=self.save,bg='#2e9cca')
+        self.add_button = Button(self.add_page, text='Add Data', command=self.save,bg=BUTTON_BG)
         self.add_button.grid(row=0, column=4,pady=10)
 
-        back_button = Button(self.add_page, text='Home Page', command=self.exit_add,bg='#2e9cca')
+        back_button = Button(self.add_page, text='Home Page', command=self.exit_add,bg=BUTTON_BG)
         back_button.grid(row=0, column=0)
 
-        add_product_button = Button(self.add_page, text='Add Product', width=15, command=self.create_entry,bg='#2e9cca')
+        add_product_button = Button(self.add_page, text='Add Product', width=15, command=self.create_entry,bg=BUTTON_BG)
         add_product_button.grid(row=0, column=1, columnspan=2)
 
         return self.add_page
@@ -183,7 +198,7 @@ class Brain:
 
     def create_excel_sheet_page(self):
         excel_sheet_page = Frame(self.window)
-        excel_sheet_page.config(bg='#25274d')
+        excel_sheet_page.config(bg=PAGE_LABEL_BG)
 
         def create_excel_sheet():
             data_file = pandas.DataFrame(columns=["Name", "Phone No", "Product",'Quantity'])
@@ -202,7 +217,7 @@ class Brain:
                 file_name_entry.delete(0,END)
             
         #Label
-        file_name_label = Label(excel_sheet_page, text="Enter Excel File Name:",font=L_FONT,bg='#25274d',fg='White')
+        file_name_label = Label(excel_sheet_page, text="Enter Excel File Name:",font=L_FONT,bg=PAGE_LABEL_BG,fg='White')
         file_name_label.grid(row=1, column=1)
 
         #entry
@@ -210,10 +225,10 @@ class Brain:
         file_name_entry.grid(row=2, column=1)
 
         #Button
-        back_button = Button(excel_sheet_page, text='Home Page', command=lambda: self.show_page('home_page'),bg='#2e9cca')
+        back_button = Button(excel_sheet_page, text='Home Page', bg=BUTTON_BG,command=lambda: self.show_page('home_page'))
         back_button.grid(row=0, column=0)
 
-        create_excel_button = Button(excel_sheet_page, text='Create', command=create_excel_sheet,bg='#2e9cca')
+        create_excel_button = Button(excel_sheet_page, text='Create',bg=BUTTON_BG, command=create_excel_sheet)
         create_excel_button.grid(row=0, column=2)
 
         return excel_sheet_page
