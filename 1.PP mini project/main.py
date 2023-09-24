@@ -102,6 +102,7 @@ class Brain:
                     data_file.to_csv(f'{self.today}.csv',mode='a',index=False,header=False)
             
             finally:
+                messagebox.showinfo(title='Excel Data Connect', message=f'Data has been added to file {self.today}.csv')
                 self.name_entry.delete(0,END)
                 self.no_entry.delete(0,END)
                 self.product_entry.delete(0,END)
@@ -240,6 +241,5 @@ class Brain:
 
         # Show the selected page
         self.pages[page].pack()
-
 
 root = Brain()
